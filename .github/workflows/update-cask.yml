@@ -1,0 +1,56 @@
+name: Update Cask
+
+on:
+  repository_dispatch:
+    types: [update-cask]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update better-screenshoot cask
+        env:
+          VERSION: ${{ github.event.client_payload.version }}
+          SHA256_ARM: ${{ github.event.client_payload.sha256_arm }}
+        run: |
+          python3 - <<'EOF'
+          import os
+          version = os.environ['VERSION']
+          sha256_arm = os.environ['SHA256_ARM']
+          url_arm = f"https://github.com/sriverogalan/better-screenshoot/releases/download/v#{{version}}/Better.Screenshoot_#{{version}}_aarch64.dmg"
+          cask = f"""cask "better-screenshoot" do
+            version "{version}"
+
+            on_arm do
+              url "{url_arm}"
+              sha256 "{sha256_arm}"
+            end
+
+            name "Better Screenshoot"
+            desc "Screenshot tool with a built-in editor"
+            homepage "https://github.com/sriverogalan/better-screenshoot"
+
+            app "Better Screenshoot.app"
+
+            postflight do
+              system_command "/usr/bin/xattr",
+                             args: ["-cr", "#{{appdir}}/Better Screenshoot.app"]
+            end
+          end
+          """
+          with open("Casks/better-screenshoot.rb", "w") as f:
+              f.write(cask)
+          print(f"Updated cask to {version} (arm sha256: {sha256_arm})")
+          EOF
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Casks/better-screenshoot.rb
+          git commit -m "chore: bump better-screenshoot to ${{ github.event.client_payload.version }}"
+          git push
