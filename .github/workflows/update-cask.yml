@@ -16,18 +16,26 @@ jobs:
         env:
           VERSION: ${{ github.event.client_payload.version }}
           SHA256_ARM: ${{ github.event.client_payload.sha256_arm }}
+          SHA256_INTEL: ${{ github.event.client_payload.sha256_intel || github.event.client_payload.sha256_x64 }}
         run: |
           python3 - <<'EOF'
           import os
           version = os.environ['VERSION']
           sha256_arm = os.environ['SHA256_ARM']
-          url_arm = f"https://github.com/sriverogalan/better-screenshoot/releases/download/v#{{version}}/Better.Screenshoot_#{{version}}_aarch64.dmg"
+          sha256_intel = os.environ['SHA256_INTEL']
+          url_arm = f"https://github.com/sriverogalan/better-screenshoot/releases/download/v#{{version}}/Better-Screenshoot_#{{version}}_aarch64.dmg"
+          url_intel = f"https://github.com/sriverogalan/better-screenshoot/releases/download/v#{{version}}/Better-Screenshoot_#{{version}}_x64.dmg"
           cask = f"""cask "better-screenshoot" do
             version "{version}"
 
             on_arm do
               url "{url_arm}"
               sha256 "{sha256_arm}"
+            end
+
+            on_intel do
+              url "{url_intel}"
+              sha256 "{sha256_intel}"
             end
 
             name "Better Screenshoot"
@@ -44,13 +52,13 @@ jobs:
           """
           with open("Casks/better-screenshoot.rb", "w") as f:
               f.write(cask)
-          print(f"Updated cask to {version} (arm sha256: {sha256_arm})")
+          print(f"Updated cask to {version} (arm sha256: {sha256_arm}, intel sha256: {sha256_intel})")
           EOF
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Casks/better-screenshoot.rb
+          git add Casks/better-screenshoot.rb .github/workflows/update-cask.yml
           git commit -m "chore: bump better-screenshoot to ${{ github.event.client_payload.version }}"
           git push
