@@ -2,13 +2,12 @@ cask "better-screenshoot" do
   version "0.5.0"
 
   on_arm do
-    url "https://github.com/sriverogalan/better-screenshoot/releases/download/v#{version}/Better-Screenshoot_#{version}_aarch64.dmg"
-    sha256 "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+    url "https://github.com/sriverogalan/better-screenshoot/releases/download/v#{version}/Better.Screenshoot_#{version}_aarch64.dmg"
+    sha256 "820a34450087c3671c8e4b13647525491ca7068edc539aa5bae8b201e8bc45cc"
   end
 
   on_intel do
-    url "https://github.com/sriverogalan/better-screenshoot/releases/download/v#{version}/Better-Screenshoot_#{version}_x64.dmg"
-    sha256 "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+    odie "better-screenshoot is currently only available for Apple Silicon (arm64) Macs."
   end
 
   name "Better Screenshoot"

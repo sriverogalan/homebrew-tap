@@ -16,15 +16,12 @@ jobs:
         env:
           VERSION: ${{ github.event.client_payload.version }}
           SHA256_ARM: ${{ github.event.client_payload.sha256_arm }}
-          SHA256_INTEL: ${{ github.event.client_payload.sha256_intel || github.event.client_payload.sha256_x64 }}
         run: |
           python3 - <<'EOF'
           import os
           version = os.environ['VERSION']
           sha256_arm = os.environ['SHA256_ARM']
-          sha256_intel = os.environ['SHA256_INTEL']
-          url_arm = f"https://github.com/sriverogalan/better-screenshoot/releases/download/v#{{version}}/Better-Screenshoot_#{{version}}_aarch64.dmg"
-          url_intel = f"https://github.com/sriverogalan/better-screenshoot/releases/download/v#{{version}}/Better-Screenshoot_#{{version}}_x64.dmg"
+          url_arm = f"https://github.com/sriverogalan/better-screenshoot/releases/download/v#{{version}}/Better.Screenshoot_#{{version}}_aarch64.dmg"
           cask = f"""cask "better-screenshoot" do
             version "{version}"
 
@@ -34,8 +31,7 @@ jobs:
             end
 
             on_intel do
-              url "{url_intel}"
-              sha256 "{sha256_intel}"
+              odie "better-screenshoot is currently only available for Apple Silicon (arm64) Macs."
             end
 
             name "Better Screenshoot"
@@ -52,7 +48,7 @@ jobs:
           """
           with open("Casks/better-screenshoot.rb", "w") as f:
               f.write(cask)
-          print(f"Updated cask to {version} (arm sha256: {sha256_arm}, intel sha256: {sha256_intel})")
+          print(f"Updated cask to {version} (arm sha256: {sha256_arm})")
           EOF
 
       - name: Commit and push
