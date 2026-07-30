@@ -1,9 +1,9 @@
 cask "better-screenshoot" do
-  version "0.5.0"
+  version "0.5.1"
 
   on_arm do
     url "https://github.com/sriverogalan/better-screenshoot/releases/download/v#{version}/Better.Screenshoot_#{version}_aarch64.dmg"
-    sha256 "820a34450087c3671c8e4b13647525491ca7068edc539aa5bae8b201e8bc45cc"
+    sha256 "3cbf368567549979e54f42b7fc84c9b65851cdc69947b0076d4f805cdbecf3e6"
   end
 
   on_intel do
